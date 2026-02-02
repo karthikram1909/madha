@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/api/v2/*"
+  to = "https://secure.madhatv.in/api/v2/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

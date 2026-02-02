@@ -10,13 +10,12 @@ const getEnvironmentInfo = () => {
 
   const isDevelopment = import.meta.env?.MODE === 'development';
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  
+
   return { isDevelopment, isLocalhost, mode: import.meta.env?.MODE || 'production' };
 };
 
 export const getApiBaseUrl = () => {
-  const { isDevelopment, isLocalhost } = getEnvironmentInfo();
-  return isDevelopment && isLocalhost ? '/api/v2' : 'https://secure.madhatv.in/api/v2';
+  return '/api/v2';
 };
 
 export const API_ENDPOINTS = {
@@ -36,18 +35,18 @@ export const API_ENDPOINTS = {
 
 export const makeApiCall = async (endpoint, data) => {
   const payload = new URLSearchParams(data);
-  
+
   console.log('📤 API Call:', { endpoint, data: Object.fromEntries(payload.entries()) });
-  
+
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: payload
   });
-  
+
   const responseText = await response.text();
   console.log('📥 API Response:', responseText.substring(0, 500));
-  
+
   try {
     const jsonResponse = JSON.parse(responseText);
     console.log('✅ Parsed:', jsonResponse);

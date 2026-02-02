@@ -33,6 +33,7 @@ import Showslist from "../components/ShowsByCategory/Showslist.json";
 // import { fetchLiveTvStream } from "../api/LiveTV";
 import "../components/assets/Home.css";
 import Hls from "hls.js";
+import { getApiBaseUrl } from "../config/apiConfig";
 
 
 
@@ -222,10 +223,10 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState([]);
   const [videoTestimonials, setVideoTestimonials] = useState([]);
   const [liveStreamUrl, setLiveStreamUrl] = useState("");
-const [videoData, setVideoData] = useState([]);
-const [textData, setTextData] = useState([]);
+  const [videoData, setVideoData] = useState([]);
+  const [textData, setTextData] = useState([]);
   const [services, setServices] = useState([]);
-const promoVideoUrl = "/Testimonial-promo.mp4";
+  const promoVideoUrl = "/Testimonial-promo.mp4";
 
   const [groupedShows, setGroupedShows] = useState({});
 
@@ -246,50 +247,50 @@ const promoVideoUrl = "/Testimonial-promo.mp4";
     }));
 
 
-// useEffect(() => {
-//   const fetchTextTestimonials = async () => {
-//     try {
-//       const res = await fetch(
-//         "https://secure.madhatv.in/api/v2/video_testimonials/list.php"
-//       );
-//       const json = await res.json();
+  // useEffect(() => {
+  //   const fetchTextTestimonials = async () => {
+  //     try {
+  //       const res = await fetch(
+  //         "https://secure.madhatv.in/api/v2/video_testimonials/list.php"
+  //       );
+  //       const json = await res.json();
 
-//       if (json?.status === true && Array.isArray(json.data)) {
-//         setTextData(json.data);
-//       } else {
-//         setTextData([]);
-//       }
-//     } catch (err) {
-//       console.error("Text testimonials fetch error:", err);
-//       setTextData([]);
-//     }
-//   };
+  //       if (json?.status === true && Array.isArray(json.data)) {
+  //         setTextData(json.data);
+  //       } else {
+  //         setTextData([]);
+  //       }
+  //     } catch (err) {
+  //       console.error("Text testimonials fetch error:", err);
+  //       setTextData([]);
+  //     }
+  //   };
 
-//   fetchTextTestimonials();
-// }, []);
+  //   fetchTextTestimonials();
+  // }, []);
 
 
-useEffect(() => {
-  const fetchServices = async () => {
-    try {
-      const res = await fetch(
-        "https://secure.madhatv.in/api/v2/services/list.php"
-      );
-      const json = await res.json();
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch(
+          "https://secure.madhatv.in/api/v2/services/list.php"
+        );
+        const json = await res.json();
 
-      if (json?.status === true && Array.isArray(json.data)) {
-        setServices(json.data);
-      } else {
+        if (json?.status === true && Array.isArray(json.data)) {
+          setServices(json.data);
+        } else {
+          setServices([]);
+        }
+      } catch (err) {
+        console.error("Services fetch error:", err);
         setServices([]);
       }
-    } catch (err) {
-      console.error("Services fetch error:", err);
-      setServices([]);
-    }
-  };
+    };
 
-  fetchServices();
-}, []);
+    fetchServices();
+  }, []);
 
 
 
@@ -298,69 +299,69 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-  const fetchVideoTestimonials = async () => {
-    try {
-      const res = await fetch(
-        "https://secure.madhatv.in/api/v2/video_testimonials/list.php"
-      );
-      const json = await res.json();
+  useEffect(() => {
+    const fetchVideoTestimonials = async () => {
+      try {
+        const res = await fetch(
+          "https://secure.madhatv.in/api/v2/video_testimonials/list.php"
+        );
+        const json = await res.json();
 
-      if (json?.status === true && Array.isArray(json.data)) {
-        setVideoData(json.data);
-      } else {
+        if (json?.status === true && Array.isArray(json.data)) {
+          setVideoData(json.data);
+        } else {
+          setVideoData([]);
+        }
+      } catch (err) {
+        console.error("Video testimonials fetch error:", err);
         setVideoData([]);
       }
-    } catch (err) {
-      console.error("Video testimonials fetch error:", err);
-      setVideoData([]);
-    }
-  };
+    };
 
-  fetchVideoTestimonials();
-}, []);
+    fetchVideoTestimonials();
+  }, []);
 
 
   useEffect(() => {
     fetchShowsByCategory();
   }, []);
 
-const fetchShowsByCategory = async () => {
+  const fetchShowsByCategory = async () => {
     try {
-        const res = await fetch("api/v2/showbycategory.php");
-        const json = await res.json();
+      const res = await fetch(`${getApiBaseUrl()}/showbycategory.php`);
+      const json = await res.json();
 
-        console.log("SHOW BY CATEGORY API:", json);
+      console.log("SHOW BY CATEGORY API:", json);
 
-        if (Array.isArray(json.data)) {
-            const grouped = {};
+      if (Array.isArray(json.data)) {
+        const grouped = {};
 
-            json.data.forEach((categoryItem) => {
-                // Get the selected language (English or Tamil)
-                const selectedLanguage = localStorage.getItem('madha_tv_language') || 'english';
+        json.data.forEach((categoryItem) => {
+          // Get the selected language (English or Tamil)
+          const selectedLanguage = localStorage.getItem('madha_tv_language') || 'english';
 
-                // Get category name based on the language
-                const categoryName = selectedLanguage === 'tamil'
-                    ? categoryItem.category_title_ta || categoryItem.category_title_en
-                    : categoryItem.category_title_en || categoryItem.category_title_ta;
+          // Get category name based on the language
+          const categoryName = selectedLanguage === 'tamil'
+            ? categoryItem.category_title_ta || categoryItem.category_title_en
+            : categoryItem.category_title_en || categoryItem.category_title_ta;
 
-                // If there are shows in the category
-                if (Array.isArray(categoryItem.shows)) {
-                    grouped[categoryName] = categoryItem.shows.map((show) => ({
-                        id: show.id,
-                        ShowTitle: selectedLanguage === 'tamil' ? show.title_ta || show.title_en : show.title_en || show.title_ta,
-                        Showimg: show.image || "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg",
-                        playlisturl: show.playlist_url || "",
-                    }));
-                }
-            });
+          // If there are shows in the category
+          if (Array.isArray(categoryItem.shows)) {
+            grouped[categoryName] = categoryItem.shows.map((show) => ({
+              id: show.id,
+              ShowTitle: selectedLanguage === 'tamil' ? show.title_ta || show.title_en : show.title_en || show.title_ta,
+              Showimg: show.image || "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg",
+              playlisturl: show.playlist_url || "",
+            }));
+          }
+        });
 
-            setGroupedShows(grouped);
-        }
+        setGroupedShows(grouped);
+      }
     } catch (err) {
-        console.error("ShowByCategory API error:", err);
+      console.error("ShowByCategory API error:", err);
     }
-};
+  };
 
 
 
@@ -454,46 +455,46 @@ const fetchShowsByCategory = async () => {
   const loadPageData = async () => {
     setIsLoading(true);
     try {
-    const [
-  allWebsiteContentData,
-  heroData,
-  homepageServicesRaw,
-  showCategoriesRaw,
-  categoryShowsRaw,
-  programsData,
-  testimonialsRaw,
-  videoTestimonialsRaw
-] = await Promise.all([
-  WebsiteContent.list(),
-  HomepageHero.list(),
-  HomepageService.list(),
-  ShowCategory.list(),
-  CategoryShow.list(),
-  Program.list('-schedule_time', 50),
-  Testimonial.list(),
-  VideoTestimonial.list()
-]);
+      const [
+        allWebsiteContentData,
+        heroData,
+        homepageServicesRaw,
+        showCategoriesRaw,
+        categoryShowsRaw,
+        programsData,
+        testimonialsRaw,
+        videoTestimonialsRaw
+      ] = await Promise.all([
+        WebsiteContent.list(),
+        HomepageHero.list(),
+        HomepageService.list(),
+        ShowCategory.list(),
+        CategoryShow.list(),
+        Program.list('-schedule_time', 50),
+        Testimonial.list(),
+        VideoTestimonial.list()
+      ]);
 
-// ✅ FILTER LOCALLY
-const homepageServicesData = homepageServicesRaw
-  .filter(i => i.is_active)
-  .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      // ✅ FILTER LOCALLY
+      const homepageServicesData = homepageServicesRaw
+        .filter(i => i.is_active)
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
-const showCategoriesData = showCategoriesRaw
-  .filter(i => i.is_active)
-  .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      const showCategoriesData = showCategoriesRaw
+        .filter(i => i.is_active)
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
-const categoryShowsData = categoryShowsRaw
-  .filter(i => i.is_active)
-  .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      const categoryShowsData = categoryShowsRaw
+        .filter(i => i.is_active)
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
-const testimonialsData = testimonialsRaw
-  .filter(i => i.is_active)
-  .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      const testimonialsData = testimonialsRaw
+        .filter(i => i.is_active)
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
-const videoTestimonialsData = videoTestimonialsRaw
-  .filter(i => i.is_active)
-  .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      const videoTestimonialsData = videoTestimonialsRaw
+        .filter(i => i.is_active)
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
 
       // const liveData = Array.isArray(liveTvApiResponse?.LiveUrl) ? liveTvApiResponse.LiveUrl : [];
@@ -509,7 +510,7 @@ const videoTestimonialsData = videoTestimonialsRaw
       //   console.warn("❌ Live TV API returned no stream", liveTvApiResponse);
       // }
 
-      
+
 
 
 
@@ -607,28 +608,28 @@ const videoTestimonialsData = videoTestimonialsRaw
   //   window.location.href = `${createPageUrl('BookService')}?${serviceParams.toString()}`;
   // };
 
-// const handleBookNowClick = (service) => {
-//   // Ensure you're using the right property from the service object
-//   const serviceParams = new URLSearchParams({
-//     service_title: service.services.trim(),  // Use the correct key for service title
-//     auto_select: 'true'
-//   });
+  // const handleBookNowClick = (service) => {
+  //   // Ensure you're using the right property from the service object
+  //   const serviceParams = new URLSearchParams({
+  //     service_title: service.services.trim(),  // Use the correct key for service title
+  //     auto_select: 'true'
+  //   });
 
-//   window.location.href = `${createPageUrl('BookService')}?${serviceParams.toString()}`;
-// };
+  //   window.location.href = `${createPageUrl('BookService')}?${serviceParams.toString()}`;
+  // };
 
-const handleBookNowClick = (service) => {
-  console.log("Selected Service:", service);  // Check if you're getting the correct data
+  const handleBookNowClick = (service) => {
+    console.log("Selected Service:", service);  // Check if you're getting the correct data
 
-  const serviceParams = new URLSearchParams({
-    service_title: service.services.trim(),
-    auto_select: 'true'
-  });
+    const serviceParams = new URLSearchParams({
+      service_title: service.services.trim(),
+      auto_select: 'true'
+    });
 
-  console.log("Redirecting to:", `${createPageUrl('BookService')}?${serviceParams.toString()}`);
+    console.log("Redirecting to:", `${createPageUrl('BookService')}?${serviceParams.toString()}`);
 
-  window.location.href = `${createPageUrl('BookService')}?${serviceParams.toString()}`;
-};
+    window.location.href = `${createPageUrl('BookService')}?${serviceParams.toString()}`;
+  };
 
 
 
@@ -644,7 +645,7 @@ const handleBookNowClick = (service) => {
 
 
   useEffect(() => {
-    fetch("api/v2/menu_contents.php?action=live&flag=0")
+    fetch(`${getApiBaseUrl()}/menu_contents.php?action=live&flag=0`)
       .then(res => res.json())
       .then(data => {
         console.log("LIVE API RESPONSE", data);
@@ -788,7 +789,7 @@ const handleBookNowClick = (service) => {
                           ₹ {listing.rate}
                         </p>
 
-                        <button style={{ marginLeft: "58px", marginTop: "-30px",position:'absolute' ,width: "85px" }}
+                        <button style={{ marginLeft: "58px", marginTop: "-30px", position: 'absolute', width: "85px" }}
                           onClick={() => handleBookNowClick(listing)}
                           className="bg-[#861518] hover:bg-[#6a1114] text-white font-semibold py-2 rounded-lg transition-colors duration-300 text-sm"
                         >
@@ -840,7 +841,7 @@ const handleBookNowClick = (service) => {
           </div>
 
           {/* Shows Section - Fully Responsive */}
-          <div className="w-full py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8" style={{height:"3200px"}}>
+          <div className="w-full py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8" style={{ height: "3200px" }}>
             <div className="max-w-7xl mx-auto">
               {/* Shows Header */}
               <div className="text-center mb-8 sm:mb-12">
@@ -858,7 +859,7 @@ const handleBookNowClick = (service) => {
                   Missed watching a show on TV? Don't worry! Explore our curated playlists with all your favourite programs, carefully organized for easy browsing and a seamless viewing experience. Be filled with God's abundant blessings.
                 </p>
               </div>
-          
+
               {/* Shows Categories */}
               <div className="space-y-8 sm:space-y-12">
                 {Object.entries(groupedShows).map(([categoryName, shows]) => (
@@ -867,7 +868,7 @@ const handleBookNowClick = (service) => {
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#deca57ff] text-center mb-6">
                       {categoryName}
                     </h2>
-          
+
                     {/* SHOWS GRID */}
                     <div className="relative">
                       {/* LEFT BUTTON */}
@@ -879,7 +880,7 @@ const handleBookNowClick = (service) => {
                       >
                         ‹
                       </button>
-          
+
                       {/* RIGHT BUTTON */}
                       <button
                         onClick={() => scrollCategory(categoryName, "right")}
@@ -889,7 +890,7 @@ const handleBookNowClick = (service) => {
                       >
                         ›
                       </button>
-          
+
                       {/* SCROLL CONTAINER */}
                       <div
                         ref={(el) => (categoryScrollRefs.current[categoryName] = el)}
@@ -916,7 +917,7 @@ const handleBookNowClick = (service) => {
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               />
                             </div>
-          
+
                             <p className="text-white mt-3 text-sm sm:text-base font-semibold text-center line-clamp-2">
                               {show.ShowTitle}
                             </p>
@@ -930,7 +931,7 @@ const handleBookNowClick = (service) => {
             </div>
           </div>
 
-          <TestimonialsSlider  language={language} videoTestimonials={videoData}
+          <TestimonialsSlider language={language} videoTestimonials={videoData}
             textTestimonials={textData} promoVideoUrl={promoVideoUrl} />
 
           <DynamicFooter />

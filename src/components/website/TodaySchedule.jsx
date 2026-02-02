@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Tv } from 'lucide-react';
 import { format } from 'date-fns';
 
+import { getApiBaseUrl } from '../../config/apiConfig';
+
 export default function TodaySchedule({ language = 'english' }) {
     const [displayPrograms, setDisplayPrograms] = useState({ live: [], upcoming: [] });
     const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +17,7 @@ export default function TodaySchedule({ language = 'english' }) {
             setIsLoading(true);
             setError(null);
             try {
-                const response = await fetch('https://secure.madhatv.in/api/v2/menu_contents.php?action=schedule&flag=0');
+                const response = await fetch(`${getApiBaseUrl()}/menu_contents.php?action=schedule&flag=0`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -43,7 +45,7 @@ export default function TodaySchedule({ language = 'english' }) {
                     try {
                         const timeStr = scheduleTime.trim();
                         const timeMatch = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-                        
+
                         if (!timeMatch) {
                             return;
                         }
@@ -99,7 +101,7 @@ export default function TodaySchedule({ language = 'english' }) {
                 setIsLoading(false);
             }
         };
-        
+
         fetchPrograms();
     }, []);
 
@@ -283,11 +285,11 @@ export default function TodaySchedule({ language = 'english' }) {
                     {language === 'tamil' ? 'அட்டவணை' : 'SCHEDULE'}
                 </h3>
             </div>
-            
+
             <Card className="bg-[#111926] backdrop-blur-sm rounded-lg shadow-lg border-0 overflow-hidden">
                 <CardContent className="p-0">
-                    <div 
-                        ref={scrollRef} 
+                    <div
+                        ref={scrollRef}
                         className="max-h-[220px] overflow-y-scroll"
                         style={{
                             scrollbarWidth: 'none', /* Firefox */
@@ -299,10 +301,10 @@ export default function TodaySchedule({ language = 'english' }) {
                                 display: none; /* Chrome, Safari, Opera */
                             }
                         `}</style>
-                        
+
                         {/* Original content */}
                         {renderProgramList()}
-                        
+
                         {/* Duplicated content for seamless loop */}
                         {renderProgramList()}
                     </div>

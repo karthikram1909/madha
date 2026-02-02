@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import UserDashboardLayout from '../components/user-dashboard/UserDashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ShoppingCart, Trash2, CalendarIcon, CheckCircle, FileText, Download
+import {
+    Loader2, ShoppingCart, Trash2, CalendarIcon, CheckCircle, FileText, Download
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
@@ -28,6 +29,8 @@ import { getLoggedInUser } from "../api/auth"; // path-ai check seidhu kollungal
 // const IS_LOCAL = false;
 
 
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
 const calculateRecurringTotal = (price, bookingType) => {
     if (bookingType === 'monthly') return price * 12;
     if (bookingType === 'yearly') return price * 12;
@@ -42,7 +45,7 @@ const USER_CART_STORAGE_KEY = 'madha_tv_user_booking_cart';
 export default function UserBookServices() {
     const [user, setUser] = useState(null);
     const [userBookings, setUserBookings] = useState([]);
-    
+
     // Initialize cart from localStorage
     const [bookingItems, setBookingItems] = useState(() => {
         try {
@@ -69,7 +72,7 @@ export default function UserBookServices() {
             return [];
         }
     });
-    
+
     const [currency, setCurrency] = useState('INR');
     const [paymentGateway, setPaymentGateway] = useState('razorpay');
     const [razorpayEnabled, setRazorpayEnabled] = useState(false);
@@ -138,361 +141,358 @@ export default function UserBookServices() {
 
 
 
-const createPayment = async (payload) => {
-  const res = await fetch(
-    "/api/v2/payment.php",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(payload)
-    }
-  );
+    const createPayment = async (payload) => {
+        const res = await fetch(
+            "/api/v2/payment.php",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(payload)
+            }
+        );
 
-  return res.json();
-};
-// const createRazorpayOrder = async (orderId) => {
-//   // 1. Get real user from localStorage helper
-//   const currentUser = getLoggedInUser();
-//   const finalAmount = calculateGrandTotal();
+        return res.json();
+    };
+    // const createRazorpayOrder = async (orderId) => {
+    //   // 1. Get real user from localStorage helper
+    //   const currentUser = getLoggedInUser();
+    //   const finalAmount = calculateGrandTotal();
 
-//   if (!currentUser) {
-//     toast.error("User session not found. Please login again.");
-//     return;
-//   }
+    //   if (!currentUser) {
+    //     toast.error("User session not found. Please login again.");
+    //     return;
+    //   }
 
-//   try {
-//     // 2. Call the Non-Seamless PHP API
-//     const res = await fetch("/api/v2/razorpay/razorpay_nonseamless.php", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/x-www-form-urlencoded"
-//       },
-//       body: new URLSearchParams({
-//         user_id: currentUser.id,           
-//         amount: finalAmount, 
-//         order_id: orderId, // Temp table ID from payment.php
-//         name: currentUser.full_name || "User",
-//         email: currentUser.email || ""
-//       })
-//     });
+    //   try {
+    //     // 2. Call the Non-Seamless PHP API
+    //     const res = await fetch("/api/v2/razorpay/razorpay_nonseamless.php", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/x-www-form-urlencoded"
+    //       },
+    //       body: new URLSearchParams({
+    //         user_id: currentUser.id,           
+    //         amount: finalAmount, 
+    //         order_id: orderId, // Temp table ID from payment.php
+    //         name: currentUser.full_name || "User",
+    //         email: currentUser.email || ""
+    //       })
+    //     });
 
-//     const data = await res.json();
-//     console.log("Razorpay Redirect Response:", data);
+    //     const data = await res.json();
+    //     console.log("Razorpay Redirect Response:", data);
 
-//     if (!data.error && data.payment_url) {
-//       // 3. SUCCESS: Redirect the entire window to Razorpay hosted page
-//       toast.info("Redirecting to Razorpay...");
-//       window.location.href = data.payment_url;
-//     } else {
-//       toast.error(data.message || "Failed to generate payment link");
-//     }
-//   } catch (e) {
-//     console.error("Razorpay Error:", e);
-//     toast.error("Connection error with payment gateway");
-//   }
-// };
+    //     if (!data.error && data.payment_url) {
+    //       // 3. SUCCESS: Redirect the entire window to Razorpay hosted page
+    //       toast.info("Redirecting to Razorpay...");
+    //       window.location.href = data.payment_url;
+    //     } else {
+    //       toast.error(data.message || "Failed to generate payment link");
+    //     }
+    //   } catch (e) {
+    //     console.error("Razorpay Error:", e);
+    //     toast.error("Connection error with payment gateway");
+    //   }
+    // };
 
 
-const createRazorpayOrder = async (orderId) => {
-  const currentUser = getLoggedInUser();
-  const finalAmount = calculateGrandTotal();
+    const createRazorpayOrder = async (orderId) => {
+        const currentUser = getLoggedInUser();
+        const finalAmount = calculateGrandTotal();
 
-  if (!currentUser) {
-    toast.error("User session not found!");
-    return;
-  }
+        if (!currentUser) {
+            toast.error("User session not found!");
+            return;
+        }
 
-  try {
-    // 1. Razorpay Order Creation (Redirect Flow)
-    const res = await fetch("/api/v2/razorpay/razorpay_nonseamless.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        user_id: currentUser.id,           
-        amount: finalAmount, 
-        order_id: orderId, // Temp table ID
-        name: currentUser.full_name || "User",
-        email: currentUser.email || ""
-      })
-    });
+        try {
+            // 1. Razorpay Order Creation (Redirect Flow)
+            const res = await fetch("/api/v2/razorpay/razorpay_nonseamless.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    user_id: currentUser.id,
+                    amount: finalAmount,
+                    order_id: orderId, // Temp table ID
+                    name: currentUser.full_name || "User",
+                    email: currentUser.email || ""
+                })
+            });
 
-    const data = await res.json();
+            const data = await res.json();
 
-    if (!data.error && data.payment_url) {
-      toast.info("Redirecting to Razorpay...");
-      // 2. Redirect seiyum munnadi URL-il dharavugal sariyaaga iruppadhai confirm seiyungal
-      window.location.href = data.payment_url;
-    } else {
-      toast.error(data.message || "Payment Link Generation Failed");
-    }
-  } catch (e) {
-    toast.error("Network Error!");
-  }
-};
+            if (!data.error && data.payment_url) {
+                toast.info("Redirecting to Razorpay...");
+                // 2. Redirect seiyum munnadi URL-il dharavugal sariyaaga iruppadhai confirm seiyungal
+                window.location.href = data.payment_url;
+            } else {
+                toast.error(data.message || "Payment Link Generation Failed");
+            }
+        } catch (e) {
+            toast.error("Network Error!");
+        }
+    };
 
-/**
- * Processes the final payment step by notifying the server.
- * Used after a successful Razorpay transaction.
- */
-const sendPaymentCallback = async (razorpayResponse, orderId) => {
-  // 1. Get real user data from your local storage helper
-  const currentUser = getLoggedInUser();
+    /**
+     * Processes the final payment step by notifying the server.
+     * Used after a successful Razorpay transaction.
+     */
+    const sendPaymentCallback = async (razorpayResponse, orderId) => {
+        // 1. Get real user data from your local storage helper
+        const currentUser = getLoggedInUser();
 
-  if (!currentUser) {
-    console.error("Critical Error: User session lost during payment.");
-    toast.error("User session lost. Please contact support with your Payment ID.");
-    return;
-  }
+        if (!currentUser) {
+            console.error("Critical Error: User session lost during payment.");
+            toast.error("User session lost. Please contact support with your Payment ID.");
+            return;
+        }
 
-  try {
-    console.log("🚀 Initiating Server Callback for Order:", orderId);
+        try {
+            console.log("🚀 Initiating Server Callback for Order:", orderId);
 
-    // 2. Send the data to your fixed payment_callback.php
-    const res = await fetch("/api/v2/payment_callback.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        // Essential fields required by your PHP FIX 2
-        user_id: currentUser.id,
-        order_id: orderId,       // The ID from servicetemp table
-        order_status: "success", // Explicitly set to pass the stripos check in PHP
+            // 2. Send the data to your fixed payment_callback.php
+            const res = await fetch("/api/v2/payment_callback.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    // Essential fields required by your PHP FIX 2
+                    user_id: currentUser.id,
+                    order_id: orderId,       // The ID from servicetemp table
+                    order_status: "success", // Explicitly set to pass the stripos check in PHP
 
-        // Razorpay response fields
-        razorpay_payment_id: razorpayResponse.razorpay_payment_id || "",
-        razorpay_order_id: razorpayResponse.razorpay_order_id || "",
-        razorpay_signature: razorpayResponse.razorpay_signature || ""
-      })
-    });
+                    // Razorpay response fields
+                    razorpay_payment_id: razorpayResponse.razorpay_payment_id || "",
+                    razorpay_order_id: razorpayResponse.razorpay_order_id || "",
+                    razorpay_signature: razorpayResponse.razorpay_signature || ""
+                })
+            });
 
-    const data = await res.json();
-    console.log("✅ Server Response:", data);
+            const data = await res.json();
+            console.log("✅ Server Response:", data);
 
-    // 3. Handle the server's final verdict
-    if (!data.error) {
-      // Success: Database updated, invoice created, and email sent
-      alert("✅ Payment & Booking Successful!\nAn invoice has been sent to your email.");
-      
-      // Optional: Redirect to a dedicated success page
-      // window.location.href = "/booking-confirmation?order=" + orderId;
-    } else {
-      // Error: Something went wrong in the PHP logic (e.g., invoice not found)
-      console.error("❌ Callback Logical Error:", data.error_msg);
-      alert("⚠️ Payment was successful, but there was an issue updating your booking: " + data.error_msg);
-    }
-  } catch (error) {
-    // Network or parsing error
-    console.error("🌐 Network Error during callback:", error);
-    alert("❌ Connection error. Please do not refresh. Contact support with your Payment ID.");
-  }
-};
+            // 3. Handle the server's final verdict
+            if (!data.error) {
+                // Success: Database updated, invoice created, and email sent
+                alert("✅ Payment & Booking Successful!\nAn invoice has been sent to your email.");
+
+                // Optional: Redirect to a dedicated success page
+                // window.location.href = "/booking-confirmation?order=" + orderId;
+            } else {
+                // Error: Something went wrong in the PHP logic (e.g., invoice not found)
+                console.error("❌ Callback Logical Error:", data.error_msg);
+                alert("⚠️ Payment was successful, but there was an issue updating your booking: " + data.error_msg);
+            }
+        } catch (error) {
+            // Network or parsing error
+            console.error("🌐 Network Error during callback:", error);
+            alert("❌ Connection error. Please do not refresh. Contact support with your Payment ID.");
+        }
+    };
 
 
     // CRITICAL FIX: Load all blocked dates once on page load
-   const loadAllBlockedDates = useCallback(async () => {
-    if (IS_LOCAL) {
-        console.log('⚠️ Skipping blocked dates load (LOCAL MODE)');
-        setAllBlockedDates([]);
-        setIsLoadingBlockedDates(false);
-        return;
-    }
-    
-    setIsLoadingBlockedDates(true);
-    try {
-        console.log('📅 Loading all blocked dates...');
-        const blocked = await BlockedServiceDate.filter({ is_active: true });
-        console.log(`✅ Loaded ${blocked.length} blocked dates`);
-        setAllBlockedDates(blocked);
-    } catch (error) {
-        console.error('Error loading blocked dates:', error);
-        setAllBlockedDates([]);
-    } finally {
-        setIsLoadingBlockedDates(false);
-    }
-}, []);
+    const loadAllBlockedDates = useCallback(async () => {
+        if (IS_LOCAL) {
+            console.log('⚠️ Skipping blocked dates load (LOCAL MODE)');
+            setAllBlockedDates([]);
+            setIsLoadingBlockedDates(false);
+            return;
+        }
 
- const loadServices = useCallback(async () => {
-  try {
-    const transformedServices = servicelists.map(service => ({
-      id: service.id,
-      key: service.servicetitle
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '_'),
-      title: service.servicetitle,
-      title_tamil: service.servicetitle,
-      short_content: '',
-      short_content_tamil: '',
-      image_url: service.img,
-      priceINR: service.amount,
-      priceUSD: Math.round(service.amount / 80),
-      timing: "6:00 PM",
-      popular: false,
-      supportsRecurring: false,
-      requiresImage: true,
-      yearlyLimit: false,
-      recurringOptions: ['one-time'],
-      isOrdinationService: false
-    }));
-
-    setServices(transformedServices);
-    console.log('✅ Services loaded from JSON:', transformedServices);
-  } catch (error) {
-    console.error('❌ Error loading services from JSON:', error);
-    setServices([]);
-  }
-}, []);
-
-useEffect(() => {
-  loadServices();
-}, [loadServices]);
-
-
-    const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-useEffect(() => {
-    const loadInitialData = async () => {
-        setIsLoading(true);
+        setIsLoadingBlockedDates(true);
         try {
-            let currentUser;
-            
-            if (IS_LOCAL) {
-                // Mock user for local development
-                console.log('⚠️ Using mock user data (LOCAL MODE)');
-                currentUser = {
-                    id: 'mock_user_123',
-                    full_name: 'Test User',
-                    email: 'test@example.com',
-                    phone: '+919876543210',
-                    address: '123 Main Street, Chennai',
-                    address_line_1: '123 Main Street, Chennai',
-                    state: 'Tamil Nadu',
-                    country: 'India',
-                    pincode: '600001',
-                    pin_code: '600001'
-                };
-            } else {
-                // Production: Get real user
-                currentUser = await User.me();
-            }
-            
-            setUser(currentUser);
-            
-            await Promise.all([
-                loadUserBookings(currentUser.id),
-                loadServices(),
-                loadRazorpayConfig(),
-                loadPayPalConfig(),
-                loadTaxConfig(),
-                loadAllBlockedDates()
-            ]);
+            console.log('📅 Loading all blocked dates...');
+            const blocked = await BlockedServiceDate.filter({ is_active: true });
+            console.log(`✅ Loaded ${blocked.length} blocked dates`);
+            setAllBlockedDates(blocked);
         } catch (error) {
-            console.error("Failed to load user data", error);
-            
-            // If error in LOCAL MODE, still set mock user
-            if (IS_LOCAL) {
-                console.warn('⚠️ Error loading data in LOCAL MODE, using mock data anyway');
-                setUser({
-                    id: 'mock_user_123',
-                    full_name: 'Test User',
-                    email: 'test@example.com',
-                    phone: '+919876543210',
-                    address: '123 Main Street, Chennai',
-                    state: 'Tamil Nadu',
-                    country: 'India',
-                    pincode: '600001'
-                });
+            console.error('Error loading blocked dates:', error);
+            setAllBlockedDates([]);
+        } finally {
+            setIsLoadingBlockedDates(false);
+        }
+    }, []);
+
+    const loadServices = useCallback(async () => {
+        try {
+            const transformedServices = servicelists.map(service => ({
+                id: service.id,
+                key: service.servicetitle
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '_'),
+                title: service.servicetitle,
+                title_tamil: service.servicetitle,
+                short_content: '',
+                short_content_tamil: '',
+                image_url: service.img,
+                priceINR: service.amount,
+                priceUSD: Math.round(service.amount / 80),
+                timing: "6:00 PM",
+                popular: false,
+                supportsRecurring: false,
+                requiresImage: false, // Changed to false to prevent blocking on image upload
+                yearlyLimit: false,
+                recurringOptions: ['one-time'],
+                isOrdinationService: false
+            }));
+
+            setServices(transformedServices);
+            console.log('✅ Services loaded from JSON:', transformedServices);
+        } catch (error) {
+            console.error('❌ Error loading services from JSON:', error);
+            setServices([]);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadServices();
+    }, [loadServices]);
+
+    useEffect(() => {
+        const loadInitialData = async () => {
+            setIsLoading(true);
+            try {
+                let currentUser;
+
+                if (IS_LOCAL) {
+                    // Mock user for local development
+                    console.log('⚠️ Using mock user data (LOCAL MODE)');
+                    currentUser = {
+                        id: 'mock_user_123',
+                        full_name: 'Test User',
+                        email: 'test@example.com',
+                        phone: '+919876543210',
+                        address: '123 Main Street, Chennai',
+                        address_line_1: '123 Main Street, Chennai',
+                        state: 'Tamil Nadu',
+                        country: 'India',
+                        pincode: '600001',
+                        pin_code: '600001'
+                    };
+                } else {
+                    // Production: Get real user
+                    currentUser = await User.me();
+                }
+
+                setUser(currentUser);
+
+                await Promise.all([
+                    loadUserBookings(currentUser.id),
+                    loadServices(),
+                    loadRazorpayConfig(),
+                    loadPayPalConfig(),
+                    loadTaxConfig(),
+                    loadAllBlockedDates()
+                ]);
+            } catch (error) {
+                console.error("Failed to load user data", error);
+
+                // If error in LOCAL MODE, still set mock user
+                if (IS_LOCAL) {
+                    console.warn('⚠️ Error loading data in LOCAL MODE, using mock data anyway');
+                    setUser({
+                        id: 'mock_user_123',
+                        full_name: 'Test User',
+                        email: 'test@example.com',
+                        phone: '+919876543210',
+                        address: '123 Main Street, Chennai',
+                        state: 'Tamil Nadu',
+                        country: 'India',
+                        pincode: '600001'
+                    });
+                }
             }
+            setIsLoading(false);
+        };
+        loadInitialData();
+    }, [loadServices, loadAllBlockedDates]);
+
+    const loadUserBookings = async (userId) => {
+        if (IS_LOCAL) {
+            console.log('⚠️ Skipping user bookings load (LOCAL MODE)');
+            setUserBookings([]);
+            return;
         }
-        setIsLoading(false);
+
+        try {
+            const bookings = await ServiceBooking.filter({ user_id: userId }, '-created_date');
+            setUserBookings(bookings || []);
+        } catch (error) {
+            console.error('Error loading user bookings:', error);
+            setUserBookings([]);
+        }
     };
-    loadInitialData();
-}, [loadServices, loadAllBlockedDates]);
 
-   const loadUserBookings = async (userId) => {
-    if (IS_LOCAL) {
-        console.log('⚠️ Skipping user bookings load (LOCAL MODE)');
-        setUserBookings([]);
-        return;
-    }
-    
-    try {
-        const bookings = await ServiceBooking.filter({ user_id: userId }, '-created_date');
-        setUserBookings(bookings || []);
-    } catch (error) {
-        console.error('Error loading user bookings:', error);
-        setUserBookings([]);
-    }
-};
-    
-const loadRazorpayConfig = async () => {
-  try {
-    const res = await fetch(
-      '/api/v2/razorpay/config.php?config_type=bookings'
-    );
+    const loadRazorpayConfig = async () => {
+        try {
+            const res = await fetch(
+                '/api/v2/razorpay/config.php?config_type=bookings'
+            );
 
-    const config = await res.json();
-    console.log("Razorpay config:", config);
+            const config = await res.json();
+            console.log("Razorpay config:", config);
 
-    if (config.key_id && config.is_enabled) {
-      setRazorpayConfig(config);
-      setRazorpayEnabled(true);
-    } else {
-      setRazorpayEnabled(false);
-    }
-  } catch (e) {
-    console.error("Razorpay config load failed", e);
-    setRazorpayEnabled(false);
-  }
-};
-
-
-
-   const loadPayPalConfig = async () => {
-    if (IS_LOCAL) {
-        console.warn('⚠️ Skipping PayPal config (LOCAL MODE)');
-        setPayPalConfig(null);
-        setPayPalEnabled(false);
-        return;
-    }
-    
-    try {
-        const [config] = await PayPalConfig.filter({ config_type: 'bookings' });
-        if (config) {
-            setPayPalConfig(config);
-            setPayPalEnabled(config.is_enabled && !!config.client_id && !!config.client_secret);
-        } else { 
-            setPayPalEnabled(false); 
+            if (config.key_id && config.is_enabled) {
+                setRazorpayConfig(config);
+                setRazorpayEnabled(true);
+            } else {
+                setRazorpayEnabled(false);
+            }
+        } catch (e) {
+            console.error("Razorpay config load failed", e);
+            setRazorpayEnabled(false);
         }
-    } catch (error) { 
-        setPayPalEnabled(false); 
-    }
-};
+    };
 
-  const loadTaxConfig = async () => {
-    if (IS_LOCAL) {
-        console.warn('⚠️ Using mock tax config (LOCAL MODE)');
-        setTaxConfig({
-            is_tax_enabled: true,
-            home_state: 'Tamil Nadu',  // ✅ FIXED: Added home_state
-            cgst_rate: 9,               // ✅ FIXED: Split into CGST
-            sgst_rate: 9,               // ✅ FIXED: Split into SGST
-            igst_rate: 18,              // ✅ FIXED: Added IGST rate
-            tax_type: 'GST'
-        });
-        return;
-    }
-    
-    try {
-        const [config] = await TaxConfig.list();
-        setTaxConfig(config);
-    } catch (error) { 
-        setTaxConfig(null); 
-    }
-};
+
+
+    const loadPayPalConfig = async () => {
+        if (IS_LOCAL) {
+            console.warn('⚠️ Skipping PayPal config (LOCAL MODE)');
+            setPayPalConfig(null);
+            setPayPalEnabled(false);
+            return;
+        }
+
+        try {
+            const [config] = await PayPalConfig.filter({ config_type: 'bookings' });
+            if (config) {
+                setPayPalConfig(config);
+                setPayPalEnabled(config.is_enabled && !!config.client_id && !!config.client_secret);
+            } else {
+                setPayPalEnabled(false);
+            }
+        } catch (error) {
+            setPayPalEnabled(false);
+        }
+    };
+
+    const loadTaxConfig = async () => {
+        if (IS_LOCAL) {
+            console.warn('⚠️ Using mock tax config (LOCAL MODE)');
+            setTaxConfig({
+                is_tax_enabled: true,
+                home_state: 'Tamil Nadu',  // ✅ FIXED: Added home_state
+                cgst_rate: 9,               // ✅ FIXED: Split into CGST
+                sgst_rate: 9,               // ✅ FIXED: Split into SGST
+                igst_rate: 18,              // ✅ FIXED: Added IGST rate
+                tax_type: 'GST'
+            });
+            return;
+        }
+
+        try {
+            const [config] = await TaxConfig.list();
+            setTaxConfig(config);
+        } catch (error) {
+            setTaxConfig(null);
+        }
+    };
 
     const handleServiceSelect = (service) => {
-        console.log("Booking is enabled",service)
+        console.log("Booking is enabled", service)
         if ((currency === 'INR' && !razorpayEnabled) || (currency === 'USD' && !payPalEnabled)) {
             toast.error("The selected payment method is currently disabled. Please contact support.");
             return;
@@ -502,7 +502,7 @@ const loadRazorpayConfig = async () => {
             toast.error("You can book up to 5 services at a time.");
             return;
         }
-        
+
         const previousBookings = user ? userBookings.filter(b => b.service_type === service.key) : [];
         setSelectedService(service);
 
@@ -510,11 +510,11 @@ const loadRazorpayConfig = async () => {
             setPreviousBookingsForService(previousBookings);
             setShowPreviousBookings(true);
         } else {
-            setSelectedBookingData(null); 
+            setSelectedBookingData(null);
             setShowBookingModal(true);
         }
     };
-    
+
     const proceedToBooking = (bookingToPreFill = null) => {
         setShowPreviousBookings(false);
         setSelectedBookingData(bookingToPreFill);
@@ -551,17 +551,17 @@ const loadRazorpayConfig = async () => {
         const userCountry = user?.country || 'India';
         return calculateTax(subtotal, userState, userCountry, taxConfig);
     };
-    
+
     const calculateGrandTotal = () => calculateTotal() + calculateCartTax().totalTax;
-    
+
     // const handlePayment = async () => {
     //    console.log('🔵 Payment button clicked!');
-    
+
     //     if (bookingItems.length === 0) {
     //         toast.error('Your cart is empty');
     //         return;
     //     }
-        
+
     //     setIsPaymentLoading(true);
     //    try {
     //         console.log('⏳ Using temporary TRN for pending bookings...');
@@ -569,7 +569,7 @@ const loadRazorpayConfig = async () => {
     //         console.log('✅ Temporary TRN:', tempTrn);
 
     //         let nextOrderIdNum = 1;
-            
+
     //         if (!IS_LOCAL) {
     //             const lastBookingResult = await ServiceBooking.list('-order_id', 1);
     //             if (lastBookingResult && lastBookingResult.length > 0 && lastBookingResult[0].order_id) {
@@ -598,7 +598,7 @@ const loadRazorpayConfig = async () => {
     //         }));
 
     //         const allBookingPayloads = [];
-            
+
     //         for (const item of cartWithImages) {
     //             const bookingType = item.formData.booking_type || 'one-time';
     //             const basePrice = item.price;
@@ -687,7 +687,7 @@ const loadRazorpayConfig = async () => {
     //                 }
     //             }
     //         }
-            
+
     //         // Create bookings based on environment
     //         let tempBookings;
 
@@ -695,14 +695,14 @@ const loadRazorpayConfig = async () => {
     //             // In LOCAL MODE, store bookings in memory instead of database
     //             console.log('⚠️ Skipping database save (LOCAL MODE)');
     //             console.log('📦 Mock bookings:', allBookingPayloads);
-                
+
     //             // Create mock booking objects with IDs
     //             tempBookings = allBookingPayloads.map((payload, index) => ({
     //                 ...payload,
     //                 id: `mock_booking_${Date.now()}_${index}`,
     //                 created_date: new Date().toISOString()
     //             }));
-                
+
     //             console.log('✅ Created', tempBookings.length, 'mock bookings');
     //         } else {
     //             // Production: Save to database
@@ -716,12 +716,12 @@ const loadRazorpayConfig = async () => {
     //         if (IS_LOCAL) {
     //             console.log('💳 Simulating payment in LOCAL MODE...');
     //             toast.info('Simulating payment in local mode...', { duration: 2000 });
-                
+
     //             await new Promise(resolve => setTimeout(resolve, 2000));
-                
+
     //             const mockPaymentId = `pay_local_${Date.now()}`;
     //             await handlePaymentSuccess({ razorpay_payment_id: mockPaymentId });
-                
+
     //             setIsPaymentLoading(false);
     //             return; // Stop here, don't load Razorpay/PayPal
     //         }
@@ -771,179 +771,179 @@ const loadRazorpayConfig = async () => {
     // Auth file-la idhai add pannunga
 
 
-const handlePayment = async () => {
-    // 1. localStorage-il irundhu user details-ai edukka helper function-ai call pannunga
-    const currentUser = getLoggedInUser();
+    const handlePayment = async () => {
+        // 1. localStorage-il irundhu user details-ai edukka helper function-ai call pannunga
+        const currentUser = getLoggedInUser();
 
-    // 2. User login panni irukkaara-nu validation seiyungal
-    if (!currentUser || !currentUser.id) {
-        toast.error('User not logged in or session expired');
-        return;
-    }
-
-    if (bookingItems.length === 0) {
-        toast.error('Your cart is empty');
-        return;
-    }
-
-    setIsPaymentLoading(true);
-    
-    try {
-        const orderedServices = bookingItems.map(item => {
-            const formattedDate = format(new Date(item.formData.booking_date), 'dd/MM/yyyy');
-            
-            return {
-                service_id: item.service.id,
-                telecast_date: formattedDate,
-                amount: item.price,
-                beneficiary_name: item.formData.beneficiary_name || '',
-                intention: item.formData.intention_text || '',
-            };
-        });
-
-        const payload = {
-            // 3. Helper function-il irundhu vandha REAL ID-ai pass pannunga
-            user_id: parseInt(currentUser.id), 
-            payment_type: paymentGateway === 'razorpay' ? 2 : 1,
-            ordered_services: orderedServices
-        };
-
-        const response = await fetch("/api/v2/payment.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (!result.error) {
-            console.log("Success! Order ID:", result.order_id);
-            if (paymentGateway === 'razorpay') {
-                createRazorpayOrder(result.order_id);
-            }
-        } else {
-            // PHP-la 'User not exists' endra error ippo varaadhu
-            toast.error(result.error_msg); 
+        // 2. User login panni irukkaara-nu validation seiyungal
+        if (!currentUser || !currentUser.id) {
+            toast.error('User not logged in or session expired');
+            return;
         }
 
-    } catch (error) {
-        console.error('Payment API error:', error);
-        toast.error("Internal Server Error");
-    } finally {
-        setIsPaymentLoading(false);
-    }
-};
-
-   const handlePaymentSuccess = async (response) => {
-    setIsPaymentLoading(true);
-    const bookingsToFinalize = finalBookingsRef.current;
-
-    try {
-        if (!bookingsToFinalize || bookingsToFinalize.length === 0) {
-            throw new Error("No pending bookings were found to finalize.");
+        if (bookingItems.length === 0) {
+            toast.error('Your cart is empty');
+            return;
         }
 
-        console.log('💳 Processing', bookingsToFinalize.length, 'bookings for payment:', response.razorpay_payment_id || response.paymentID);
-        
-        let confirmedTrn;
-        
-        if (IS_LOCAL) {
-            // Generate mock TRN for local mode
-            confirmedTrn = `TRN${Date.now().toString().slice(-6)}`;
-            console.log('⚠️ Using mock TRN (LOCAL MODE):', confirmedTrn);
-        } else {
-            // Production: Call real function
-            const trnResponse = await base44.functions.invoke('generateTRN');
-            confirmedTrn = trnResponse.data.trn;
-            console.log('✅ Sequential TRN generated:', confirmedTrn);
-        }
-        
-        let updatedBookings;
-        
-        if (IS_LOCAL) {
-            // In LOCAL MODE: Update bookings in memory
-            console.log('⚠️ Updating bookings in memory (LOCAL MODE)');
-            
-            updatedBookings = bookingsToFinalize.map(b => ({
-                ...b,
-                trn: confirmedTrn,
-                payment_status: 'completed',
-                payment_id: response.razorpay_payment_id || response.paymentID,
-                status: 'confirmed'
-            }));
-            
-            console.log('✅ Updated', updatedBookings.length, 'mock bookings');
-        } else {
-            // Production: Update in database
-            const updatePromises = bookingsToFinalize.map(b => ServiceBooking.update(b.id, {
-                trn: confirmedTrn,
-                payment_status: 'completed',
-                payment_id: response.razorpay_payment_id || response.paymentID,
-                status: 'confirmed'
-            }));
-            await Promise.all(updatePromises);
+        setIsPaymentLoading(true);
 
-            const updatedBookingsRaw = await Promise.all(bookingsToFinalize.map(b => ServiceBooking.get(b.id)));
-            updatedBookings = updatedBookingsRaw.filter(Boolean);
+        try {
+            const orderedServices = bookingItems.map(item => {
+                const formattedDate = format(new Date(item.formData.booking_date), 'dd/MM/yyyy');
 
-            if (updatedBookings.length === 0) {
-                throw new Error("Could not retrieve confirmed booking details after update.");
-            }
-
-            console.log('✅ Retrieved', updatedBookings.length, 'confirmed bookings');
-        }
-        
-        updatedBookings.forEach((booking, index) => {
-            console.log(`📋 Booking ${index + 1} verification:`, {
-                id: booking.id,
-                service_type: booking.service_type,
-                beneficiary_name: booking.beneficiary_name,
-                booker_name: booking.booker_name,
-                booking_date: booking.booking_date,
-                amount: booking.amount,
-                intention_text: booking.intention_text,
-                has_all_required_fields: !!(booking.service_type && booking.beneficiary_name && booking.booker_name && booking.booking_date && booking.amount)
+                return {
+                    service_id: item.service.id,
+                    telecast_date: formattedDate,
+                    amount: item.price,
+                    beneficiary_name: item.formData.beneficiary_name || '',
+                    intention: item.formData.intention_text || '',
+                };
             });
-        });
-        
-        const missingDataBookings = updatedBookings.filter(b => 
-            !b.service_type || !b.beneficiary_name || !b.booker_name || !b.booking_date || !b.amount
-        );
-        
-        if (missingDataBookings.length > 0) {
-            console.error('⚠️ WARNING: Some bookings are missing critical data:', missingDataBookings.map(b => b.id));
-        }
-        
-        setBookingItems([]);
-        finalBookingsRef.current = [];
 
-        setSuccessModalData({
-            isOpen: true,
-            bookings: [...updatedBookings],
-            paymentRef: response.razorpay_payment_id || response.paymentID || '',
-            currency: currency
-        });
+            const payload = {
+                // 3. Helper function-il irundhu vandha REAL ID-ai pass pannunga
+                user_id: parseInt(currentUser.id),
+                payment_type: paymentGateway === 'razorpay' ? 2 : 1,
+                ordered_services: orderedServices
+            };
 
-        // Skip email in LOCAL MODE
-        if (!IS_LOCAL) {
-            generateAndSendConfirmation(updatedBookings, response.razorpay_payment_id || response.paymentID);
-        } else {
-            console.log('⚠️ Skipping email send (LOCAL MODE)');
-        }
-        
-        // Only reload bookings in production
-        if (!IS_LOCAL) {
-            loadUserBookings(user.id);
-        }
+            const response = await fetch("/api/v2/payment.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
 
-    } catch (error) {
-        console.error("❌ Error finalizing payment:", error);
-        toast.error(`Payment successful but finalization failed: ${error.message}. Please contact support.`);
-        finalBookingsRef.current = [];
-    } finally {
-        setIsPaymentLoading(false);
-    }
-};
+            const result = await response.json();
+
+            if (!result.error) {
+                console.log("Success! Order ID:", result.order_id);
+                if (paymentGateway === 'razorpay') {
+                    createRazorpayOrder(result.order_id);
+                }
+            } else {
+                // PHP-la 'User not exists' endra error ippo varaadhu
+                toast.error(result.error_msg);
+            }
+
+        } catch (error) {
+            console.error('Payment API error:', error);
+            toast.error("Internal Server Error");
+        } finally {
+            setIsPaymentLoading(false);
+        }
+    };
+
+    const handlePaymentSuccess = async (response) => {
+        setIsPaymentLoading(true);
+        const bookingsToFinalize = finalBookingsRef.current;
+
+        try {
+            if (!bookingsToFinalize || bookingsToFinalize.length === 0) {
+                throw new Error("No pending bookings were found to finalize.");
+            }
+
+            console.log('💳 Processing', bookingsToFinalize.length, 'bookings for payment:', response.razorpay_payment_id || response.paymentID);
+
+            let confirmedTrn;
+
+            if (IS_LOCAL) {
+                // Generate mock TRN for local mode
+                confirmedTrn = `TRN${Date.now().toString().slice(-6)}`;
+                console.log('⚠️ Using mock TRN (LOCAL MODE):', confirmedTrn);
+            } else {
+                // Production: Call real function
+                const trnResponse = await base44.functions.invoke('generateTRN');
+                confirmedTrn = trnResponse.data.trn;
+                console.log('✅ Sequential TRN generated:', confirmedTrn);
+            }
+
+            let updatedBookings;
+
+            if (IS_LOCAL) {
+                // In LOCAL MODE: Update bookings in memory
+                console.log('⚠️ Updating bookings in memory (LOCAL MODE)');
+
+                updatedBookings = bookingsToFinalize.map(b => ({
+                    ...b,
+                    trn: confirmedTrn,
+                    payment_status: 'completed',
+                    payment_id: response.razorpay_payment_id || response.paymentID,
+                    status: 'confirmed'
+                }));
+
+                console.log('✅ Updated', updatedBookings.length, 'mock bookings');
+            } else {
+                // Production: Update in database
+                const updatePromises = bookingsToFinalize.map(b => ServiceBooking.update(b.id, {
+                    trn: confirmedTrn,
+                    payment_status: 'completed',
+                    payment_id: response.razorpay_payment_id || response.paymentID,
+                    status: 'confirmed'
+                }));
+                await Promise.all(updatePromises);
+
+                const updatedBookingsRaw = await Promise.all(bookingsToFinalize.map(b => ServiceBooking.get(b.id)));
+                updatedBookings = updatedBookingsRaw.filter(Boolean);
+
+                if (updatedBookings.length === 0) {
+                    throw new Error("Could not retrieve confirmed booking details after update.");
+                }
+
+                console.log('✅ Retrieved', updatedBookings.length, 'confirmed bookings');
+            }
+
+            updatedBookings.forEach((booking, index) => {
+                console.log(`📋 Booking ${index + 1} verification:`, {
+                    id: booking.id,
+                    service_type: booking.service_type,
+                    beneficiary_name: booking.beneficiary_name,
+                    booker_name: booking.booker_name,
+                    booking_date: booking.booking_date,
+                    amount: booking.amount,
+                    intention_text: booking.intention_text,
+                    has_all_required_fields: !!(booking.service_type && booking.beneficiary_name && booking.booker_name && booking.booking_date && booking.amount)
+                });
+            });
+
+            const missingDataBookings = updatedBookings.filter(b =>
+                !b.service_type || !b.beneficiary_name || !b.booker_name || !b.booking_date || !b.amount
+            );
+
+            if (missingDataBookings.length > 0) {
+                console.error('⚠️ WARNING: Some bookings are missing critical data:', missingDataBookings.map(b => b.id));
+            }
+
+            setBookingItems([]);
+            finalBookingsRef.current = [];
+
+            setSuccessModalData({
+                isOpen: true,
+                bookings: [...updatedBookings],
+                paymentRef: response.razorpay_payment_id || response.paymentID || '',
+                currency: currency
+            });
+
+            // Skip email in LOCAL MODE
+            if (!IS_LOCAL) {
+                generateAndSendConfirmation(updatedBookings, response.razorpay_payment_id || response.paymentID);
+            } else {
+                console.log('⚠️ Skipping email send (LOCAL MODE)');
+            }
+
+            // Only reload bookings in production
+            if (!IS_LOCAL) {
+                loadUserBookings(user.id);
+            }
+
+        } catch (error) {
+            console.error("❌ Error finalizing payment:", error);
+            toast.error(`Payment successful but finalization failed: ${error.message}. Please contact support.`);
+            finalBookingsRef.current = [];
+        } finally {
+            setIsPaymentLoading(false);
+        }
+    };
 
     const handlePayPalCancel = async () => {
         setShowPayPalModal(false);
@@ -961,10 +961,10 @@ const handlePayment = async () => {
     const generateAndSendConfirmation = async (bookings, paymentId) => {
         console.log('📧 ========== EMAIL INVOICE GENERATION START ==========');
         console.log('📧 Processing', bookings.length, 'booking(s) for invoice');
-        
+
         try {
             const mainBooking = bookings[0];
-            
+
             console.log('📧 Main booking complete data:', {
                 id: mainBooking.id,
                 trn: mainBooking.trn,
@@ -984,17 +984,17 @@ const handlePayment = async () => {
                 country: mainBooking.country,
                 booker_pincode: mainBooking.booker_pincode
             });
-            
+
             const subtotal = bookings.reduce((sum, b) => sum + (parseFloat(b.amount) || 0), 0);
             const totalTax = bookings.reduce((sum, b) => sum + (parseFloat(b.tax_amount) || 0), 0);
             const cgstTotal = bookings.reduce((s, b) => s + (parseFloat(b.cgst_amount) || 0), 0);
             const sgstTotal = bookings.reduce((s, b) => s + (parseFloat(b.sgst_amount) || 0), 0);
             const igstTotal = bookings.reduce((s, b) => s + (parseFloat(b.igst_amount) || 0), 0);
-            
+
             // CRITICAL FIX: Use TRN for invoice number in email
             const trnNumber = mainBooking.trn || '001';
             console.log('📧 Using TRN for email invoice number:', trnNumber);
-            
+
             const invoiceData = {
                 name: mainBooking.booker_name || 'Customer',
                 email: mainBooking.booker_email || 'noemail@example.com',
@@ -1003,7 +1003,7 @@ const handlePayment = async () => {
                 state: mainBooking.state || '',
                 country: mainBooking.country || 'India',
                 pincode: mainBooking.booker_pincode || '',
-                
+
                 booker_name: mainBooking.booker_name || 'Customer',
                 booker_email: mainBooking.booker_email || 'noemail@example.com',
                 booker_phone: mainBooking.booker_phone || '0000000000',
@@ -1011,14 +1011,14 @@ const handlePayment = async () => {
                 booker_state: mainBooking.state || '',
                 booker_country: mainBooking.country || 'India',
                 booker_pincode: mainBooking.booker_pincode || '',
-                
+
                 // CRITICAL FIX: Use TRN consistently for invoice number
                 trn: trnNumber,
                 invoice_id: trnNumber,
                 invoice_number: trnNumber,
                 invoice_date: new Date().toISOString(),
                 currency: mainBooking.currency || 'INR',
-                
+
                 subtotal: subtotal,
                 sub_total: subtotal,
                 cgst: cgstTotal,
@@ -1032,27 +1032,27 @@ const handlePayment = async () => {
                 total: subtotal + totalTax,
                 total_amount: subtotal + totalTax,
                 grand_total: subtotal + totalTax,
-                
+
                 bookings: bookings.map((b, idx) => {
                     const bookingData = {
                         id: b.id || '',
                         service_type: b.service_type || 'service_not_specified',
                         service_name: b.service_type || 'Service',
-                        
+
                         beneficiary_name: b.beneficiary_name || 'Beneficiary',
                         dedicated_to: b.beneficiary_name || 'Beneficiary',
                         booker_name: b.booker_name || 'Customer',
                         dedicated_by: b.booker_name || 'Customer',
-                        
+
                         intention_text: b.intention_text || '',
                         message: b.intention_text || b.description || '',
                         description: b.description || '',
-                        
+
                         booking_date: b.booking_date || new Date().toISOString().split('T')[0],
                         telecast_date: b.booking_date || new Date().toISOString().split('T')[0],
                         date: b.booking_date || new Date().toISOString().split('T')[0],
                         created_date: b.created_date || new Date().toISOString(),
-                        
+
                         amount: parseFloat(b.amount) || 0,
                         price: parseFloat(b.amount) || 0,
                         tax_amount: parseFloat(b.tax_amount) || 0,
@@ -1060,18 +1060,18 @@ const handlePayment = async () => {
                         sgst_amount: parseFloat(b.sgst_amount) || 0,
                         igst_amount: parseFloat(b.igst_amount) || 0,
                         currency: b.currency || 'INR',
-                        
+
                         status: b.status || 'confirmed',
                         booking_type: b.booking_type || 'one-time',
-                        
+
                         booker_email: b.booker_email || mainBooking.booker_email || '',
                         booker_phone: b.booker_phone || mainBooking.booker_phone || '',
-                        
+
                         ordination_date: b.ordination_date || null,
                         vows_date: b.vows_date || null,
                         jubilee_date: b.jubilee_date || null
                     };
-                    
+
                     console.log(`📧 Booking ${idx + 1} in invoice:`, {
                         service_type: bookingData.service_type,
                         beneficiary_name: bookingData.beneficiary_name,
@@ -1080,10 +1080,10 @@ const handlePayment = async () => {
                         amount: bookingData.amount,
                         intention_text: bookingData.intention_text
                     });
-                    
+
                     return bookingData;
                 }),
-                
+
                 meta: {
                     booker_info: {
                         name: mainBooking.booker_name || 'Customer',
@@ -1109,11 +1109,11 @@ const handlePayment = async () => {
                     igst: igstTotal,
                     total: subtotal + totalTax
                 },
-                
+
                 service_count: bookings.length,
                 booking_count: bookings.length
             };
-            
+
             console.log('📧 ========== FINAL INVOICE DATA VERIFICATION ==========');
             console.log('📧 Invoice Number (TRN):', trnNumber);
             console.log('📧 Customer:', invoiceData.name, invoiceData.email);
@@ -1125,7 +1125,7 @@ const handlePayment = async () => {
             console.log('📧 First booking date:', invoiceData.bookings[0]?.booking_date);
             console.log('📧 First booking amount:', invoiceData.bookings[0]?.amount);
             console.log('📧 ========== SENDING TO EMAIL FUNCTION ==========');
-            
+
             const emailResponse = await base44.functions.invoke('sendResendEmail', {
                 module: 'bookings',
                 type: 'confirmation',
@@ -1144,20 +1144,20 @@ const handlePayment = async () => {
             console.error('❌ Error in email confirmation:', error.message);
             console.error('❌ Error stack:', error.stack);
         }
-        
+
         console.log('📧 ========== EMAIL INVOICE GENERATION END ==========');
     };
-    
+
     const createUserInvoiceData = (bookings) => {
         const currentBookings = Array.isArray(bookings) ? bookings : [bookings];
         const subtotal = currentBookings.reduce((sum, b) => sum + (parseFloat(b.amount) || 0), 0);
         const totalTax = currentBookings.reduce((sum, b) => sum + (parseFloat(b.tax_amount) || 0), 0);
-        
+
         const firstBooking = currentBookings[0];
-        
+
         console.log('📄 Creating invoice data for', currentBookings.length, 'booking(s)');
         console.log('📄 First booking raw data:', JSON.stringify(firstBooking, null, 2));
-        
+
         const bookerInfo = {
             name: firstBooking.booker_name || '',
             email: firstBooking.booker_email || '',
@@ -1167,41 +1167,41 @@ const handlePayment = async () => {
             country: firstBooking.country || 'India',
             pincode: firstBooking.booker_pincode || ''
         };
-        
+
         console.log('📄 Extracted booker info:', JSON.stringify(bookerInfo, null, 2));
-        
+
         const trnNumber = firstBooking.trn || '001';
         const orderIdNumber = firstBooking.order_id || 'N/A';
-        
+
         console.log('🔢 Creating invoice with TRN:', trnNumber, 'Order ID:', orderIdNumber);
-        
+
         const invoiceData = {
             bookings: currentBookings.map(b => ({
-                id: b.id, 
-                service_type: b.service_type || '', 
-                beneficiary_name: b.beneficiary_name || '', 
+                id: b.id,
+                service_type: b.service_type || '',
+                beneficiary_name: b.beneficiary_name || '',
                 booker_name: b.booker_name || '',
-                intention_text: b.intention_text || '', 
-                description: b.description || '', 
+                intention_text: b.intention_text || '',
+                description: b.description || '',
                 booking_date: b.booking_date || '',
                 amount: parseFloat(b.amount) || 0,
-                tax_amount: parseFloat(b.tax_amount) || 0, 
+                tax_amount: parseFloat(b.tax_amount) || 0,
                 cgst_amount: parseFloat(b.cgst_amount) || 0,
-                sgst_amount: parseFloat(b.sgst_amount) || 0, 
+                sgst_amount: parseFloat(b.sgst_amount) || 0,
                 igst_amount: parseFloat(b.igst_amount) || 0,
-                currency: b.currency || 'INR', 
-                status: b.status || 'confirmed', 
+                currency: b.currency || 'INR',
+                status: b.status || 'confirmed',
                 booking_type: b.booking_type || 'one-time',
-                booker_email: b.booker_email || '', 
-                booker_phone: b.booker_phone || '', 
+                booker_email: b.booker_email || '',
+                booker_phone: b.booker_phone || '',
                 created_date: b.created_date || new Date().toISOString(),
-                ordination_date: b.ordination_date || null, 
-                vows_date: b.vows_date || null, 
+                ordination_date: b.ordination_date || null,
+                vows_date: b.vows_date || null,
                 jubilee_date: b.jubilee_date || null,
                 order_id: b.order_id || 'N/A',
             })),
             totals: {
-                subtotal: subtotal, 
+                subtotal: subtotal,
                 cgst: currentBookings.reduce((s, b) => s + (parseFloat(b.cgst_amount) || 0), 0),
                 sgst: currentBookings.reduce((s, b) => s + (parseFloat(b.sgst_amount) || 0), 0),
                 igst: currentBookings.reduce((s, b) => s + (parseFloat(b.igst_amount) || 0), 0),
@@ -1217,12 +1217,12 @@ const handlePayment = async () => {
                 invoice_date: new Date().toISOString()
             }
         };
-        
+
         console.log('📄 Final invoice data structure:', JSON.stringify(invoiceData, null, 2));
-        
+
         return invoiceData;
     };
-    
+
     const handleInvoiceAction = async (action) => {
         if (!successModalData.isOpen || successModalData.bookings.length === 0) return;
         toast.info('Generating invoice...');
@@ -1236,7 +1236,7 @@ const handlePayment = async () => {
             toast.error('Failed to generate invoice.');
         }
     };
-    
+
     const handleCloseSuccessModal = () => {
         setSuccessModalData({ isOpen: false, bookings: [], paymentRef: '', currency: 'INR' });
     };
@@ -1250,8 +1250,8 @@ const handlePayment = async () => {
                             {language === 'tamil' ? 'சேவைகளை பதிவு செய்க' : 'Book a Service'}
                         </h1>
                         <p className="text-slate-600 mt-1">
-                            {language === 'tamil' 
-                                ? 'எங்கள் ஆன்மீக சேவைகளில் இருந்து தேர்ந்தெடுக்கவும்' 
+                            {language === 'tamil'
+                                ? 'எங்கள் ஆன்மீக சேவைகளில் இருந்து தேர்ந்தெடுக்கவும்'
                                 : 'Choose from our spiritual services'}
                         </p>
                     </div>
@@ -1288,7 +1288,7 @@ const handlePayment = async () => {
                                                         src={service.image_url || NO_IMAGE_AVAILABLE_URL}
                                                         alt={getServiceDisplayName(service)}
                                                         className="w-full h-full object-cover"
-                                                        onError={(e) => { e.target.onerror = null; e.target.src=NO_IMAGE_AVAILABLE_URL; }}
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = NO_IMAGE_AVAILABLE_URL; }}
                                                     />
                                                 </div>
 
@@ -1373,7 +1373,7 @@ const handlePayment = async () => {
                 allBlockedDates={allBlockedDates}
                 isLoadingBlockedDates={isLoadingBlockedDates}
             />
-             <PreviousBookingsModal
+            <PreviousBookingsModal
                 isOpen={showPreviousBookings} onClose={() => setShowPreviousBookings(false)}
                 service={selectedService} previousBookings={previousBookingsForService}
                 onProceedToBook={proceedToBooking}
@@ -1389,7 +1389,7 @@ const handlePayment = async () => {
                     currency={currency}
                 />
             )}
-             <BookingSuccessModal
+            <BookingSuccessModal
                 isOpen={successModalData.isOpen}
                 onClose={handleCloseSuccessModal}
                 confirmedBookings={successModalData.bookings}
@@ -1421,7 +1421,7 @@ const handlePayment = async () => {
     );
 }
 
-   // ============ FIXED BOOKING CART PANEL ============
+// ============ FIXED BOOKING CART PANEL ============
 // function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGateway, setPaymentGateway, calculateTotal, calculateTax, calculateGrandTotal, onPayment, isPaymentLoading, razorpayEnabled, payPalEnabled, setCart }) {
 //     const language = localStorage.getItem('madha_tv_language') || 'english';
 
@@ -1438,16 +1438,16 @@ const handlePayment = async () => {
 //                     ? `நாணயம் ${newCurrency} ஆக மாற்றப்படுகிறது. விலைகள் புதுப்பிக்கப்படுகின்றன...`
 //                     : `Switching currency to ${newCurrency}. Updating prices...`
 //             );
-            
+
 //             const updatedCart = cart.map(item => {
 //                 const newPrice = newCurrency === 'INR' ? item.service.priceINR : item.service.priceUSD;
 //                 return { ...item, price: newPrice };
 //             });
-            
+
 //             setCart(updatedCart);
 //             setCurrency(newCurrency);
 //             setPaymentGateway(newCurrency === 'INR' ? 'razorpay' : 'paypal');
-            
+
 //             toast.success(
 //                 language === 'tamil'
 //                     ? `விலைகள் ${newCurrency} க்கு புதுப்பிக்கப்பட்டன`
@@ -1472,7 +1472,7 @@ const handlePayment = async () => {
 //                     <Badge variant="secondary" className="text-sm">{cart.length}/5</Badge>
 //                 </CardTitle>
 //             </CardHeader>
-            
+
 //             <CardContent className="p-4">
 //                 {/* Currency Toggle */}
 //                 <div className="flex items-center justify-center gap-3 p-3 rounded-lg bg-slate-50 mb-4">
@@ -1552,7 +1552,7 @@ const handlePayment = async () => {
 //                                 <span>{language === 'tamil' ? 'மொத்த துணைத் தொகை:' : 'Subtotal:'}</span>
 //                                 <span className="font-semibold">{currencySymbol}{subtotal.toLocaleString()}</span>
 //                             </div>
-                            
+
 //                             {taxCalculation.totalTax > 0 && (
 //                                 <>
 //                                     {taxCalculation.taxType === 'cgst_sgst' && (
@@ -1579,7 +1579,7 @@ const handlePayment = async () => {
 //                                     </div>
 //                                 </>
 //                             )}
-                            
+
 //                             <div className="border-t pt-3 mt-3">
 //                                 <div className="flex justify-between font-bold text-lg">
 //                                     <span className="text-slate-900">
@@ -1622,7 +1622,7 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
     const subtotal = calculateTotal() || 0;
     const taxCalculation = calculateTax() || { cgst: 0, sgst: 0, igst: 0, totalTax: 0, taxType: 'none' };
     const grandTotal = calculateGrandTotal() || 0;
-    
+
     // Debug logging
     console.log('💰 Cart Calculation:', {
         cartItems: cart.length,
@@ -1640,16 +1640,16 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                     ? `நாணயம் ${newCurrency} ஆக மாற்றப்படுகிறது. விலைகள் புதுப்பிக்கப்படுகின்றன...`
                     : `Switching currency to ${newCurrency}. Updating prices...`
             );
-            
+
             const updatedCart = cart.map(item => {
                 const newPrice = newCurrency === 'INR' ? item.service.priceINR : item.service.priceUSD;
                 return { ...item, price: newPrice };
             });
-            
+
             setCart(updatedCart);
             setCurrency(newCurrency);
             setPaymentGateway(newCurrency === 'INR' ? 'razorpay' : 'paypal');
-            
+
             toast.success(
                 language === 'tamil'
                     ? `விலைகள் ${newCurrency} க்கு புதுப்பிக்கப்பட்டன`
@@ -1674,29 +1674,27 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                     <Badge variant="secondary" className="text-sm">{cart.length}/5</Badge>
                 </CardTitle>
             </CardHeader>
-            
+
             <CardContent className="p-4">
                 {/* Currency Toggle */}
                 <div className="flex items-center justify-center gap-3 p-3 rounded-lg bg-slate-50 mb-4">
-                    <Label 
-                        htmlFor="currency-toggle-user" 
-                        className={`cursor-pointer font-semibold text-sm transition-colors ${
-                            currency === 'INR' ? 'text-red-600' : 'text-slate-400'
-                        }`}
+                    <Label
+                        htmlFor="currency-toggle-user"
+                        className={`cursor-pointer font-semibold text-sm transition-colors ${currency === 'INR' ? 'text-red-600' : 'text-slate-400'
+                            }`}
                     >
                         INR (₹)
                     </Label>
-                    <Switch 
-                        id="currency-toggle-user" 
-                        checked={currency === 'USD'} 
+                    <Switch
+                        id="currency-toggle-user"
+                        checked={currency === 'USD'}
                         onCheckedChange={handleCurrencyToggle}
                         className="data-[state=checked]:bg-red-600"
                     />
-                    <Label 
-                        htmlFor="currency-toggle-user" 
-                        className={`cursor-pointer font-semibold text-sm transition-colors ${
-                            currency === 'USD' ? 'text-red-600' : 'text-slate-400'
-                        }`}
+                    <Label
+                        htmlFor="currency-toggle-user"
+                        className={`cursor-pointer font-semibold text-sm transition-colors ${currency === 'USD' ? 'text-red-600' : 'text-slate-400'
+                            }`}
                     >
                         USD ($)
                     </Label>
@@ -1716,14 +1714,14 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                             {cart.map((item) => {
                                 const itemTotal = calculateRecurringTotal(item.price, item.formData.booking_type || 'one-time');
                                 return (
-                                    <div 
-                                        key={item.id} 
+                                    <div
+                                        key={item.id}
                                         className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-red-200 transition-colors"
                                     >
                                         <div className="flex-1 min-w-0">
                                             <p className="font-semibold text-sm text-slate-900 truncate">
-                                                {language === 'tamil' && item.service.title_tamil 
-                                                    ? item.service.title_tamil 
+                                                {language === 'tamil' && item.service.title_tamil
+                                                    ? item.service.title_tamil
                                                     : item.service.title}
                                             </p>
                                             <p className="text-xs text-slate-600 mt-1">
@@ -1734,10 +1732,10 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                                             <p className="font-bold text-sm text-red-700 whitespace-nowrap">
                                                 {currencySymbol}{itemTotal.toLocaleString()}
                                             </p>
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-700" 
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-700"
                                                 onClick={() => onRemove(item.id)}
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -1754,7 +1752,7 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                                 <span>{language === 'tamil' ? 'மொத்த துணைத் தொகை:' : 'Subtotal:'}</span>
                                 <span className="font-semibold">{currencySymbol}{Number(subtotal || 0).toFixed(0)}</span>
                             </div>
-                            
+
                             {currency === 'INR' && taxCalculation && taxCalculation.totalTax > 0 && (
                                 <>
                                     {(taxCalculation.cgst > 0 || taxCalculation.sgst > 0) && (
@@ -1781,7 +1779,7 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                                     </div>
                                 </>
                             )}
-                            
+
                             <div className="border-t pt-3 mt-3">
                                 <div className="flex justify-between font-bold text-lg">
                                     <span className="text-slate-900">
@@ -1795,10 +1793,10 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
                         </div>
 
                         {/* Payment Button */}
-                        
-                        <Button 
-                            onClick={onPayment} 
-                            disabled={isPaymentLoading || cart.length === 0 || !grandTotal || grandTotal <= 0} 
+
+                        <Button
+                            onClick={onPayment}
+                            disabled={isPaymentLoading || cart.length === 0 || !grandTotal || grandTotal <= 0}
                             className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-6 text-base disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
                             {isPaymentLoading ? (
@@ -1819,35 +1817,35 @@ function BookingCartPanel({ cart, onRemove, currency, setCurrency, paymentGatewa
     );
 }
 const onPayment = async () => {
-  try {
-    console.log("Payment button clicked!");
+    try {
+        console.log("Payment button clicked!");
 
-    // 1️⃣ Call payment.php (same as Postman)
-    const paymentRes = await fetch("/api/v2/payment.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        user_id: user.id, // example: 4655
-        ordered_services: JSON.stringify(cart),
-        payment_type: 2
-      })
-    }).then(res => res.json());
+        // 1️⃣ Call payment.php (same as Postman)
+        const paymentRes = await fetch("/api/v2/payment.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                user_id: user.id, // example: 4655
+                ordered_services: JSON.stringify(cart),
+                payment_type: 2
+            })
+        }).then(res => res.json());
 
-    console.log("payment.php response:", paymentRes);
+        console.log("payment.php response:", paymentRes);
 
-    if (paymentRes.error) {
-      alert("Payment init failed");
-      return;
+        if (paymentRes.error) {
+            alert("Payment init failed");
+            return;
+        }
+
+        // paymentRes.order_id = 91076 (like Postman)
+        await createRazorpayOrder(paymentRes.order_id);
+
+    } catch (err) {
+        console.error("Payment error", err);
     }
-
-    // paymentRes.order_id = 91076 (like Postman)
-    await createRazorpayOrder(paymentRes.order_id);
-
-  } catch (err) {
-    console.error("Payment error", err);
-  }
 };
 
 
@@ -1898,7 +1896,7 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
     const bookingType = formData.booking_type || 'one-time';
     const totalPrice = calculateRecurringTotal(basePrice, bookingType);
     const currencySymbol = currency === 'INR' ? '₹' : '$';
-    
+
     const getBookingTypeText = () => {
         if (bookingType === 'one-time') return '';
         if (bookingType === 'monthly') return language === 'tamil' ? ' (மாதாந்திரத் திட்டம்)' : ' (monthly plan)';
@@ -1924,20 +1922,20 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
         const today = startOfDay(new Date());
         const selectedDate = startOfDay(date);
         const minDate = addDays(today, 5);
-        
+
         if (selectedDate < minDate) {
             return true;
         }
-        
+
         if (service.key === 'holy_mass' && isSunday(selectedDate)) {
             return true;
         }
-        
+
         const dateString = format(selectedDate, 'yyyy-MM-dd');
         if (serviceBlockedDates.includes(dateString)) {
             return true;
         }
-        
+
         return false;
     };
 
@@ -1946,10 +1944,10 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
 
         if (!formData.beneficiary_name) errors.beneficiary_name = language === 'tamil' ? "பயனாளி பெயர் அவசியம்" : "Beneficiary Name is required";
         if (!formData.booker_name) errors.booker_name = language === 'tamil' ? "உங்கள் பெயர் அவசியம்" : "Your Name is required";
-        
+
         if (!formData.booker_email) errors.booker_email = language === 'tamil' ? "உங்கள் மின்னஞ்சல் முகவரி அவசியம்" : "Your Email is required";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.booker_email)) errors.booker_email = language === 'tamil' ? "தவறான மின்னஞ்சல் வடிவம்" : "Invalid Email format";
-        
+
         if (!formData.booker_phone) {
             errors.booker_phone = language === 'tamil' ? "உங்கள் தொலைபேசி எண் அவசியம்" : "Your Phone is required";
         } else {
@@ -1958,12 +1956,12 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                 errors.booker_phone = language === 'tamil' ? "தொலைபேசி எண் சரியாக 10 இலக்கங்களாக இருக்க வேண்டும்" : "Phone number must be exactly 10 digits";
             }
         }
-        
+
         const isOrdinationService = service.isOrdinationService || service.key === 'ordination_service' || service.title.toLowerCase().includes('ordination') || service.title.toLowerCase().includes('religious anniversary');
-        
+
         if (isOrdinationService) {
             if (!formData.description) errors.description = language === 'tamil' ? "இந்த சேவைக்கு விளக்கம் அவசியம்" : "Description is required for this service";
-            
+
             // Validate specific date based on ordination_type
             if (formData.ordination_type === 'ordination' && !formData.ordination_date) {
                 errors.ordination_date = language === 'tamil' ? "குருப்பட்டம் பெற்ற தேதி அவசியம்" : "Ordination Date is required";
@@ -2007,24 +2005,27 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
         if (service.key === 'birthday_service' && !formData.birthday_date) {
             errors.birthday_date = language === 'tamil' ? "பிறந்தநாள் தேதி அவசியம்" : "Birthday Date is required";
         }
-        
+
         if (!isOrdinationService && service.key === 'marriage_blessing' && !formData.marriage_date) {
             errors.marriage_date = language === 'tamil' ? "திருமண தேதி அவசியம்" : "Marriage Date is required";
         }
-        
+
         return errors;
     };
 
     const handleSubmit = () => {
+        console.log("Submitting booking form...");
         const errors = validateForm();
         setFormErrors(errors);
 
         if (Object.keys(errors).length > 0) {
+            console.warn("Validation errors:", errors);
             const firstErrorKey = Object.keys(errors)[0];
             toast.error(errors[firstErrorKey]);
             return;
         }
 
+        console.log("Validation passed. Adding to cart:", formData);
         onAddToCart(formData);
     };
 
@@ -2112,19 +2113,19 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                             <Label htmlFor="booking_type">{language === 'tamil' ? 'புக்கிங் வகை*' : 'Booking Type*'}</Label>
                             <Select
                                 value={formData.booking_type}
-                                onValueChange={v => setFormData(p => ({...p, booking_type: v}))}
+                                onValueChange={v => setFormData(p => ({ ...p, booking_type: v }))}
                             >
                                 <SelectTrigger id="booking_type">
-                                    <SelectValue placeholder={language === 'tamil' ? 'புக்கிங் வகையைத் தேர்ந்தெடுக்கவும்' : 'Select a booking type'}/>
+                                    <SelectValue placeholder={language === 'tamil' ? 'புக்கிங் வகையைத் தேர்ந்தெடுக்கவும்' : 'Select a booking type'} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {service.recurringOptions?.map(o => {
-                                        const displayText = o === 'one-time' 
+                                        const displayText = o === 'one-time'
                                             ? (language === 'tamil' ? 'ஒரு முறை' : 'One time')
                                             : o === 'monthly'
-                                            ? (language === 'tamil' ? 'மாதாந்திரம் (12 மாதங்கள்)' : 'Monthly (12 months)')
-                                            : (language === 'tamil' ? 'வருடாந்திரம் (12 மாதங்கள்)' : 'Yearly (12 months)');
-                                        
+                                                ? (language === 'tamil' ? 'மாதாந்திரம் (12 மாதங்கள்)' : 'Monthly (12 months)')
+                                                : (language === 'tamil' ? 'வருடாந்திரம் (12 மாதங்கள்)' : 'Yearly (12 months)');
+
                                         return <SelectItem key={o} value={o}>{displayText}</SelectItem>;
                                     })}
                                 </SelectContent>
@@ -2169,7 +2170,7 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                             {serviceBlockedDates.length > 0 && (language === 'tamil' ? ' • சில தேதிகள் தடுக்கப்பட்டுள்ளன' : ' • Some dates are blocked')}
                         </p>
                     </div>
-                    
+
                     {needsBirthdayDate && (
                         <div>
                             <Label htmlFor="birthday_date">{language === 'tamil' ? 'பிறந்தநாள் தேதி*' : 'Birthday Date*'}</Label>
@@ -2243,7 +2244,7 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                                 <Select
                                     value={formData.ordination_type || 'ordination'}
                                     onValueChange={v => {
-                                        setFormData(p => ({...p, ordination_type: v}));
+                                        setFormData(p => ({ ...p, ordination_type: v }));
                                         setFormErrors(prev => ({ ...prev, ordination_date: null, vows_date: null, jubilee_date: null }));
                                     }}
                                 >
@@ -2360,7 +2361,7 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                                     id="description"
                                     value={formData.description || ''}
                                     onChange={e => {
-                                        setFormData(p => ({...p, description: e.target.value}));
+                                        setFormData(p => ({ ...p, description: e.target.value }));
                                         setFormErrors(prev => ({ ...prev, description: null }));
                                     }}
                                     className={formErrors.description ? 'border-red-500' : ''}
@@ -2381,7 +2382,7 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                                 onChange={e => {
                                     // Filter out Tamil characters (Unicode range U+0B80 to U+0BFF)
                                     const englishOnly = e.target.value.replace(/[\u0B80-\u0BFF]/g, '');
-                                    setFormData(p => ({...p, intention_text: englishOnly}));
+                                    setFormData(p => ({ ...p, intention_text: englishOnly }));
                                     setFormErrors(prev => ({ ...prev, intention_text: null }));
                                 }}
                                 className={formErrors.intention_text ? 'border-red-500' : ''}
@@ -2404,7 +2405,7 @@ const BookingFormModal = ({ isOpen, onClose, service, user, onAddToCart, currenc
                                 className={formErrors.image ? 'border-red-500' : ''}
                             />
                             {formErrors.image && <p className="text-red-500 text-xs mt-1">{formErrors.image}</p>}
-                            {imagePreview && <img src={imagePreview} className="w-16 h-16 mt-2 rounded" alt="Preview"/>}
+                            {imagePreview && <img src={imagePreview} className="w-16 h-16 mt-2 rounded" alt="Preview" />}
                         </div>
                     )}
                 </div>

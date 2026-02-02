@@ -1,0 +1,278 @@
+[
+    {
+    "id":1,
+    "Showimg":"/images/1.webp",
+    "ShowTitle":"ADORATION",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IWFPWDjUDIz7yBrSpFl9c9"
+}
+,
+{
+    "id":2,
+    "Showimg":"/images/2.webp",
+    "ShowTitle":"DAILY MASS",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LZkU8Z3fR0E3N4nRDNs_gl"
+},
+{
+    "id":3,
+    "Showimg":"/images/3.webp",
+    "ShowTitle":"BESANT NAGAR MASS",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+      "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94KsSEgXgfjvZiI9XVqr1btx"
+},
+{
+    "id":4,
+    "Showimg":"/images/4.webp",
+    "ShowTitle":"SUNDAY MASS",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IyQcXhIu1LI-fnTeZP_nTe"
+},
+{
+    "id":5,
+    "Showimg":"/images/5.webp",
+    "ShowTitle":"THIRUPUGAZH MAALAI",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94JPm2B2kf8WywacM-2T0dQE"
+},
+{
+    "id":6,
+    "Showimg":"/images/6.webp",
+    "ShowTitle":"DIVINE MERCY ROSARY",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94JmJBKGuQG4qNVdlWUnpa5r"
+},
+{
+    "id":7,
+    "Showimg":"/images/sacred.webp",
+    "ShowTitle":"SACRED HEART ROSARY",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LrNOxSgNhDCXASs4i4Nc51"
+},
+{
+    "id":8,
+    "Showimg":"/images/7.webp",
+    "ShowTitle":"NEETHAR NINAIVUANJALI",
+     "ShowCategory":"EMMAUS EXPERIENCE",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IeztYP1wKqVtJF4vi6ZAnR"
+},
+
+{
+    "id":9,
+    "Showimg":"/images/8.webp",
+    "ShowTitle":"VIVILIYAM ARIVOM",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IsJPTCWDWtkeZANEiu7RtW"
+}
+,
+{
+    "id":10,
+    "Showimg":"/images/9.webp",
+    "ShowTitle":"YEDUTHU VAASI",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LH7PSpV7b_g94krrfpE15E"
+},
+{
+    "id":11,
+    "Showimg":"/images/iraivaarthai.jpg",
+    "ShowTitle":"VAZHVU THARUM IRAIVAARTHAI",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94KcMYpiBKyQWWI6YBZJYKFe"
+},
+{
+    "id":12,
+    "Showimg":"/images/11.webp",
+    "ShowTitle":"ANDRADA UNAVU",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IaZES_KSWyApIcHQeyK-qA"
+},
+{
+    "id":13,
+    "Showimg":"/images/12.webp",
+    "ShowTitle":"DHINAM ORU THIRUPADAL",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LOr2XvnCL_w320SyyspcZ4"
+},
+{
+    "id":14,
+    "Showimg":"/images/13.webp",
+    "ShowTitle":"INDRAIYA PUNIDHAR",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94JcRyLZFFwmPMTWo1uLK0AB"
+},
+{
+    "id":15,
+    "Showimg":"/images/14.webp",
+    "ShowTitle":"EN VAZHVIL VIANNEY",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IUl3w2bBf62lsdS3rtwt2n"
+},
+{
+    "id":16,
+    "Showimg":"/images/15.webp",
+    "ShowTitle":"VEETHIKKU VARATUM THIRUVIVILIYAM",
+     "ShowCategory":"SPIRITUOBIBLICAL PROGRAMME",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94KRQoKOzCWrgy0h43Dm8a10"
+}
+,
+{
+    "id":17,
+    "Showimg":"/images/16.webp",
+    "ShowTitle":"KADAVUL VANAKKAM",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLj2HKicK3kiSkU_b6Z9Yu1_fX6DUZaPjg"
+},
+{
+    "id":18,
+    "Showimg":"/images/17.webp",
+    "ShowTitle":"VANTHADHUM THANRTHADHUM",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94Ie9FmuWaU9KfAIXwmDEQOq"
+},
+{
+    "id":19,
+    "Showimg":"/images/18.webp",
+    "ShowTitle":"NALAMA NEEGA NALAMA ",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IB_80Dh22gbNRTVwVSbUCm"
+},
+{
+    "id":20,
+    "Showimg":"/images/19.webp",
+    "ShowTitle":"KATHAIKALAM VANGA",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94Lgtcpj3_zqxVJefn_d9cPR"
+},
+{
+    "id":21,
+    "Showimg":"/images/20.webp",
+    "ShowTitle":"URAVUGAL MEMBADA (SEASON 2)",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94Kf853uYp2xj5dO4pES0kVq"
+},
+{
+    "id":22,
+    "Showimg":"/images/21.webp",
+    "ShowTitle":"GOOD NIGHT TALK",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LBzogi8pvYnMBa6p9G_KZw"
+},
+{
+    "id":23,
+    "Showimg":"/images/22.webp",
+    "ShowTitle":"VATICAN TOP 10",
+     "ShowCategory":"INFOTAINMENT PROGRAMMES",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LTyPPlEmIcR-guUHmufsAo"
+},
+{
+    "id":24,
+    "Showimg":"/images/23.webp",
+    "ShowTitle":"ARAM SEI",
+     "ShowCategory":"ZONAL | DIOCESAN SHOWS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LuPyIKWMG6ERMr1wqCv2CE"
+},
+
+{
+    "id":25,
+    "Showimg":"/images/24.webp",
+    "ShowTitle":"PAADI PUGAZHVOM",
+     "ShowCategory":"ZONAL | DIOCESAN SHOWS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LXNpRU4jhUm4Riv1FWlCzY"
+},
+
+{
+    "id":26,
+    "Showimg":"/images/25.webp",
+    "ShowTitle":"PUTHAGAM PESUGIRATHU",
+     "ShowCategory":"ZONAL | DIOCESAN SHOWS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LHlSD0em_x5YwUHZ00e-GA"
+},
+{
+    "id":27,
+    "Showimg":"/images/26.webp",
+    "ShowTitle":" NARCHEITHI MALARGAL",
+     "ShowCategory":"ZONAL | DIOCESAN SHOWS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94Jma2YUx0V_GMSwn1wUScIz"
+},
+
+{
+    "id":28,
+    "Showimg":"/images/27.webp",
+    "ShowTitle":"CATHOLIC COMMUNITIES ABROAD",
+     "ShowCategory":"ZONAL | DIOCESAN SHOWS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94IIMDj7FLc8H1xHeNzl3zu5"
+},
+
+{
+    "id":29,
+    "Showimg":"/images/28.webp",
+    "ShowTitle":"PRAISE AND WORSHIP",
+     "ShowCategory":"ZONAL | DIOCESAN SHOWS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PL6XuDsT5OiKWbLm105h3QUnDkaxSiYeMT"
+},
+
+{
+    "id":30,
+    "Showimg":"/images/29.webp",
+    "ShowTitle":"ETHIRNOKKIN THIRUPAYANIGAL",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94Jcsm1wE6IuWtsUvcrXRZ86"
+}
+,
+
+{
+    "id":31,
+    "Showimg":"/images/30.webp",
+    "ShowTitle":"KOOTORUNGIYA THIRUAVAI",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"http://youtube.com/playlist?list=PLd6JUeKFI94JZevNnz8llDxjzKsVfEIQG"
+}
+,
+
+{
+    "id":32,
+    "Showimg":"/images/31.webp",
+    "ShowTitle":"OPPURAVAE NALLURAVU",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94ICzO8gVzoIT59Z7o3nqv-F"
+}
+,
+
+{
+    "id":33,
+    "Showimg":"/images/32.webp",
+    "ShowTitle":"SAAVE UNN VETRI ENGE",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94LRuyuim1NEHpopPn0zBswY"
+}
+,
+
+{
+    "id":34,
+    "Showimg":"/images/33.webp",
+    "ShowTitle":"NEE NAMBINAAL ",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94J3TVt2Vz2SHCDzJijNp-wp"
+}
+,
+
+{
+    "id":35,
+    "Showimg":"/images/34.webp",
+    "ShowTitle":"MESIYAVAI THEDI",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94I90NM6sSOQLPwrqczfVRzr"
+}
+,
+
+{
+    "id":36,
+    "Showimg":"/images/35.webp",
+    "ShowTitle":"WORLD COMMUNICATION WEEK",
+     "ShowCategory":"CATHOLIC CHURCH TEACHINGS",
+     "playlisturl":"https://www.youtube.com/playlist?list=PLd6JUeKFI94KmbYeRQ4clmoZofMLBVom_"
+}
+
+
+
+]

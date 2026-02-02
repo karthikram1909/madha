@@ -1,0 +1,48 @@
+[{
+    "id":1,
+    "img":"/serviceimages/hollymass.webp",
+    "servicetitle":"Holy Mass Sponsor",
+    "amount": 5000
+},
+
+{
+    "id":2,
+    "img":"/serviceimages/rosary.webp",
+
+    "servicetitle":"Holy Rosary Sponsor",
+    "amount": 1000
+},
+
+{
+    "id":3,
+    "img":"/serviceimages/birthday.webp",
+
+    "servicetitle":"Birthday Wishes",
+    "amount": 500
+},
+{
+    "id":4,
+    "img":"/serviceimages/weddinganniversary.webp",
+
+    "servicetitle":"Wedding Anniversary",
+    "amount": 500
+},
+{
+    "id":5,
+    "img":"/serviceimages/ordination.jpg",
+
+    "servicetitle":"Ordination | Religious Anniversary",
+    "amount": 500
+},
+{
+    "id":6,
+    "img":"/serviceimages/neetharninaivuanjali.webp",
+
+    "servicetitle":"Neethaar Ninaivu Anjali ",
+    "amount": 500
+}
+
+
+
+
+]

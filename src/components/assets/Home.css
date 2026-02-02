@@ -1,0 +1,16 @@
+#live-tvconnect,
+#live-tvconnect video {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  pointer-events: auto;
+}
+
+
+@media (max-width: 768px) {
+
+#live-tvconnect{
+    width: 300px !important;;
+    height: 180px !important;
+}
+}

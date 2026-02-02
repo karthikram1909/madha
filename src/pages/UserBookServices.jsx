@@ -373,7 +373,7 @@ export default function UserBookServices() {
                     };
                 } else {
                     // Production: Get real user
-                    currentUser = await User.me();
+                    currentUser = getLoggedInUser();
                 }
 
                 setUser(currentUser);
